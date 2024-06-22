@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    min-height: 100vh;
+    background: -webkit-linear-gradient(180deg, rgb(26, 21, 39), rgb(37, 43, 112));
+    background: -moz-linear-gradient(180deg, rgb(26, 21, 39), rgb(37, 43, 112));
+    background: linear-gradient(180deg, rgb(26, 21, 39), rgb(37, 43, 112));
+  }
+}
