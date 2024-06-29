@@ -1,4 +1,4 @@
-import UserSchema from "../models/UserSchema.js";
+import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -7,7 +7,7 @@ export const register = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const isUserUsed = await UserSchema.findOne({ username });
+    const isUserUsed = await User.findOne({ username });
     if (isUserUsed) {
       return res.json({ message: "Данное имя пользователя занято" });
     }
@@ -15,7 +15,7 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hash = bcrypt.hashSync(password, salt);
 
-    const newUser = new UserSchema({
+    const newUser = new User({
       username,
       password: hash,
     });
@@ -44,7 +44,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await UserSchema.findOne({ username });
+    const user = await User.findOne({ username });
 
     if (!user)
       return res.json({ message: "Данного пользователя не существует." });
@@ -75,7 +75,7 @@ export const login = async (req, res) => {
 //Get me Info
 export const getMe = async (req, res) => {
   try {
-    const user = await UserSchema.findById(req.userId);
+    const user = await User.findById(req.userId);
 
     if (!user)
       return res.json({ message: "Такого пользователя не существует." });
