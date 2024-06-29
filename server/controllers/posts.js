@@ -23,43 +23,76 @@ export const createNewPost = async (req, res) => {
 
       await newPostWithImage.save();
       await User.findByIdAndUpdate(req.userId, {
-        $push: { posts: newPostWithImage},
+        $push: { posts: newPostWithImage },
       });
 
-      return res.json(newPostWithImage)
+      return res.json(newPostWithImage);
     }
 
     const newPostWithoutImage = new Post({
       username: user.username,
       title,
       text,
-      imgUrl: '',
+      imgUrl: "",
       author: req.userId,
-    })
+    });
 
     await newPostWithoutImage.save();
     await User.findByIdAndUpdate(req.userId, {
-      $push: { posts: newPostWithoutImage},
+      $push: { posts: newPostWithoutImage },
     });
 
-    res.json(newPostWithoutImage)
-
+    res.json(newPostWithoutImage);
   } catch (error) {
-    res.json({ message: 'При создании поста произошла ошибка' })
+    res.json({ message: "При создании поста произошла ошибка" });
   }
 };
 
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().sort('-createdAt')
-    const popularPosts = await Post.find().limit(5).sort("-views")
+    const posts = await Post.find().sort("-createdAt");
+    const popularPosts = await Post.find().limit(5).sort("-views");
 
-    if(!posts) {
-      return res.json({ message: "Постов нет" })
-    } 
+    if (!posts) {
+      return res.json({ message: "Постов нет" });
+    }
 
-    res.json({posts, popularPosts})
+    res.json({ posts, popularPosts });
   } catch (error) {
-    console.log({message: "Не удалось получить посты"})
+    console.log({ message: "Не удалось получить посты" });
   }
-}
+};
+
+export const getById = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(req.params.id, {
+      $inc: { views: 1 },
+    });
+  
+    res.json(post)
+  } catch (error) {
+    res.json({ message: "Пост не найден" })
+  }
+  
+};
+
+export const getOwnPosts = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    const list = await Promise.all(
+      user.posts.map((post) => {
+        return Post.findById(post._id)
+      })
+    )
+
+    res.json(list);
+  } catch (error) {
+    console.error(error); // Добавление вывода ошибки в консоль для отладки
+    res.status(500).json({ message: "Личные посты не найдены" });
+  }
+};
+

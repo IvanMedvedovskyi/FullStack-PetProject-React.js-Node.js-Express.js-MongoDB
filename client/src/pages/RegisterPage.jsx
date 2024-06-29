@@ -31,7 +31,7 @@ const RegisterPage = () => {
   useEffect(() => {
     if(status) toast(status)
       if(isAuth) navigate("/")
-  }, [isAuth, navigate])
+  }, [isAuth, navigate, status])
 
   return (
     <form 
