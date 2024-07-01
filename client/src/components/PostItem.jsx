@@ -18,7 +18,7 @@ const PostItem = ({ post }) => {
       </div>
       <div className="my-3 p-3">
         <div className="font-bold text-white text-xl mb-2">{post.title}</div>
-        <p className="text-white opacity-65 text-base">{post.text}</p>
+        <p className="text-white opacity-65 text-base break-words line-clamp-4">{post.text}</p>
       </div>
       <div className="pt-4 pb-2 p-3">
         <span className="text-white text-sm">{post.username}</span>

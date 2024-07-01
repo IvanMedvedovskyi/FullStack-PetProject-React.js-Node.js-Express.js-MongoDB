@@ -3,6 +3,7 @@ import PostItem from "../components/PostItem";
 import PostPopular from "../components/PostPopular";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllPosts } from "../redux/features/posts/postsSlice";
+import { Link } from "react-router-dom";
 
 const MainPage = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const MainPage = () => {
     dispatch(getAllPosts());
   }, [dispatch]);
 
-  if (!posts.length) {
+  if (!posts?.length) {
     return (
       <div className="text-xl text-center text-white py-15">
         Постов не существует
@@ -32,9 +33,11 @@ const MainPage = () => {
           <div className="text-sm uppercase font-bold text-white">
             Популярное:
           </div>
-          {popularPosts?.map((post, idx) => (
-            <PostPopular key={idx} post={post} />
-          ))}
+            {popularPosts?.map((post, idx) => (
+              <Link key={idx} to={`${post._id}`}>
+                  <PostPopular key={idx} post={post} />
+              </Link>            
+            ))}
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import Comment from '../models/Comment.js'
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -68,12 +69,11 @@ export const getById = async (req, res) => {
     const post = await Post.findByIdAndUpdate(req.params.id, {
       $inc: { views: 1 },
     });
-  
-    res.json(post)
+
+    res.json(post);
   } catch (error) {
-    res.json({ message: "Пост не найден" })
+    res.json({ message: "Пост не найден" });
   }
-  
 };
 
 export const getOwnPosts = async (req, res) => {
@@ -85,9 +85,9 @@ export const getOwnPosts = async (req, res) => {
 
     const list = await Promise.all(
       user.posts.map((post) => {
-        return Post.findById(post._id)
+        return Post.findById(post._id);
       })
-    )
+    );
 
     res.json(list);
   } catch (error) {
@@ -96,3 +96,70 @@ export const getOwnPosts = async (req, res) => {
   }
 };
 
+export const deletePostById = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params.id);
+
+    if (!post) {
+      return res.json({ message: "Пост отсутствует" });
+    }
+
+    await User.findByIdAndUpdate(req.userId, {
+      $pull: { posts: req.params.id },
+    });
+
+    res.json({ message: "Пост был удалён" });
+  } catch (error) {
+    res.json({ message: "Что-то пошло не так" });
+  }
+};
+
+export const updatePost = async (req, res) => {
+  try {
+    const {title, text, id} = req.body
+
+    const post = await Post.findById(id)
+
+    if (req.files) {
+      let fileName = Date.now().toString() + req.files.image.name;
+      const __dirname = dirname(fileURLToPath(import.meta.url));
+      req.files.image.mv(path.join(__dirname, "..", "uploads", fileName));
+      post.imgUrl = fileName || ""
+    }
+
+    post.title = title
+    post.text = text
+
+    await post.save()
+
+    res.json(post)
+  } catch (error) {
+    res.json({message: "Что-то пошло не так"})
+  }
+};
+
+export const getCommentToPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+    console.log(post)
+
+    if(!post) return res.json({message: "Нет такого поста"})
+
+      const commentsList = await Promise.all(
+        post.comments.map(async (comment) => {
+          try {
+            const foundComment = await Comment.findById(comment)
+            return foundComment
+          } catch (error) {
+            console.log(`Ошибка при получении комментария с ID ${comment}:`, error)
+            throw error
+          }
+        })
+      )
+      
+
+    res.json(commentsList)
+  } catch (error) {
+    res.json({message: "Не удалось получить комментарии"})
+  }
+}
