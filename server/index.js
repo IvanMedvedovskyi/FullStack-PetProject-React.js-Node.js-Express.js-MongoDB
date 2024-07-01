@@ -18,7 +18,13 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
 
 //Middleware
-app.use(cors())
+app.use(cors(
+  {
+    origin: ["https://full-stack-pet-project-react-js-node-js-express-js-mongo-front.vercel.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credential: true,
+  }
+))
 app.use(fileUpload())
 app.use(express.json())
 app.use(express.static("uploads"))
