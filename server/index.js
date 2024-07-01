@@ -18,13 +18,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
 
 //Middleware
-app.use(cors(
-  {
-    origin: ["https://full-stack-pet-project-react-js-node-js-express-js-mongo-front.vercel.app/"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credential: true,
-  }
-))
+app.use(cors())
 app.use(fileUpload())
 app.use(express.json())
 app.use(express.static("uploads"))
@@ -36,7 +30,7 @@ app.use('/api/comments', commentsRouter)
 async function start() {
   try {
     await mongoose.connect(
-      `mongodb+srv://${DB_USER}:${DB_PASSWORD}@reactmongonodejs.odsgpzr.mongodb.net/${DB_NAME}?retryWrites=true&w=majority&appName=ReactMongoNodeJS`
+      process.env.MONGO_URL
     );
 
     app.listen(PORT, () => console.log(`Server war started at port ${PORT}`));
