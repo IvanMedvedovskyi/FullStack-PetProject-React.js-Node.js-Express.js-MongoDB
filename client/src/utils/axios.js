@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-    baseURL: 'http://localhost:3003/api'
+    baseURL: 'full-stack-pet-project-react-js-node-js-express-js-mongo-db-api.vercel.app'
 })
 
 instance.interceptors.request.use(config => {
